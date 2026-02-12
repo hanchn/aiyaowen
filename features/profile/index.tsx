@@ -10,53 +10,57 @@ import {
   FlatList,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { MOCK_FEED } from '../home/data/mock';
+import { MOCK_FEED, SUBJECTS } from '../home/data/mock';
 
 const { width } = Dimensions.get('window');
 const ITEM_WIDTH = width / 3;
 
 export default function ProfileScreen() {
-  const [activeTab, setActiveTab] = useState<'works' | 'likes'>('works');
+  const [activeTab, setActiveTab] = useState<'collection' | 'mistakes'>('collection');
 
   const renderHeader = () => (
     <View style={styles.header}>
       <View style={styles.avatarContainer}>
         <Image
-          source={{ uri: 'https://i.pravatar.cc/150?u=me' }}
+          source={{ uri: 'https://i.pravatar.cc/150?u=student' }}
           style={styles.avatar}
         />
-        <View style={styles.addIcon}>
-          <Ionicons name="add-circle" size={24} color="#1890ff" />
+        <View style={styles.levelBadge}>
+          <Text style={styles.levelText}>Lv.5</Text>
         </View>
       </View>
-      <Text style={styles.name}>@MyUsername</Text>
+      <Text style={styles.name}>Student Alex</Text>
       <Text style={styles.bio}>
-        Creating awesome content! 📸 🎥
-        {'\n'}Follow for more vibes ✨
+        Learning Physics & Math 🚀
+        {'\n'}Goal: Master Calculus by June!
       </Text>
 
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>12.5k</Text>
-          <Text style={styles.statLabel}>Following</Text>
+          <Text style={styles.statValue}>12.5h</Text>
+          <Text style={styles.statLabel}>Study Time</Text>
         </View>
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>890k</Text>
-          <Text style={styles.statLabel}>Followers</Text>
+          <Text style={styles.statValue}>42</Text>
+          <Text style={styles.statLabel}>Topics Mastered</Text>
         </View>
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>2.3M</Text>
-          <Text style={styles.statLabel}>Likes</Text>
+          <Text style={styles.statValue}>15</Text>
+          <Text style={styles.statLabel}>Day Streak</Text>
         </View>
       </View>
 
-      <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.editButton}>
-          <Text style={styles.editButtonText}>Edit Profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.bookmarkButton}>
-          <Ionicons name="bookmark-outline" size={20} color="#333" />
-        </TouchableOpacity>
+      <View style={styles.subjectProgress}>
+        <Text style={styles.progressTitle}>Subject Proficiency</Text>
+        <View style={styles.progressRow}>
+          {SUBJECTS.slice(0, 3).map(subject => (
+            <View key={subject.id} style={styles.progressItem}>
+              <View style={[styles.progressDot, { backgroundColor: subject.color }]} />
+              <Text style={styles.progressLabel}>{subject.label}</Text>
+              <Text style={styles.progressValue}>75%</Text>
+            </View>
+          ))}
+        </View>
       </View>
     </View>
   );
@@ -64,24 +68,26 @@ export default function ProfileScreen() {
   const renderTab = () => (
     <View style={styles.tabContainer}>
       <TouchableOpacity
-        style={[styles.tab, activeTab === 'works' && styles.activeTab]}
-        onPress={() => setActiveTab('works')}
+        style={[styles.tab, activeTab === 'collection' && styles.activeTab]}
+        onPress={() => setActiveTab('collection')}
       >
         <Ionicons
-          name="grid-outline"
+          name="bookmark-outline"
           size={24}
-          color={activeTab === 'works' ? '#333' : '#999'}
+          color={activeTab === 'collection' ? '#333' : '#999'}
         />
+        <Text style={[styles.tabLabel, activeTab === 'collection' && styles.activeTabLabel]}>Saved</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.tab, activeTab === 'likes' && styles.activeTab]}
-        onPress={() => setActiveTab('likes')}
+        style={[styles.tab, activeTab === 'mistakes' && styles.activeTab]}
+        onPress={() => setActiveTab('mistakes')}
       >
         <Ionicons
-          name="heart-outline"
+          name="warning-outline"
           size={24}
-          color={activeTab === 'likes' ? '#333' : '#999'}
+          color={activeTab === 'mistakes' ? '#333' : '#999'}
         />
+        <Text style={[styles.tabLabel, activeTab === 'mistakes' && styles.activeTabLabel]}>Mistakes</Text>
       </TouchableOpacity>
     </View>
   );
@@ -99,9 +105,8 @@ export default function ProfileScreen() {
           <Text style={styles.typeIcon}>📝</Text>
         </View>
       )}
-      <View style={styles.viewsOverlay}>
-        <Ionicons name="play-outline" size={12} color="#fff" />
-        <Text style={styles.viewsText}>{item.likes}</Text>
+      <View style={[styles.subjectBadge, { backgroundColor: SUBJECTS.find(s => s.id === item.subject)?.color }]}>
+        <Text style={styles.subjectText}>{item.subject[0].toUpperCase()}</Text>
       </View>
     </View>
   );
@@ -144,12 +149,21 @@ const styles = StyleSheet.create({
     height: 96,
     borderRadius: 48,
   },
-  addIcon: {
+  levelBadge: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#fff',
+    backgroundColor: '#f1c40f',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
+  levelText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#fff',
   },
   name: {
     fontSize: 18,
@@ -165,55 +179,81 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: 'row',
     gap: 40,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   statItem: {
     alignItems: 'center',
   },
   statValue: {
-    fontSize: 17,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 2,
+    color: '#333',
   },
   statLabel: {
     fontSize: 12,
     color: '#666',
   },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: 8,
+  subjectProgress: {
+    width: '90%',
+    backgroundColor: '#f9f9f9',
+    padding: 16,
+    borderRadius: 12,
   },
-  editButton: {
-    paddingHorizontal: 32,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 4,
-  },
-  editButtonText: {
+  progressTitle: {
+    fontSize: 14,
     fontWeight: '600',
+    marginBottom: 12,
+    color: '#333',
   },
-  bookmarkButton: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
+  progressRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  progressItem: {
+    alignItems: 'center',
+  },
+  progressDot: {
+    width: 8,
+    height: 8,
     borderRadius: 4,
+    marginBottom: 4,
+  },
+  progressLabel: {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 2,
+  },
+  progressValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   tabContainer: {
     flexDirection: 'row',
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#eee',
+    marginTop: 10,
   },
   tab: {
     flex: 1,
     alignItems: 'center',
     paddingVertical: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
     borderBottomColor: '#333',
+  },
+  tabLabel: {
+    fontSize: 14,
+    color: '#999',
+    fontWeight: '500',
+  },
+  activeTabLabel: {
+    color: '#333',
   },
   gridItem: {
     width: ITEM_WIDTH,
@@ -241,17 +281,19 @@ const styles = StyleSheet.create({
   typeIcon: {
     fontSize: 30,
   },
-  viewsOverlay: {
+  subjectBadge: {
     position: 'absolute',
-    bottom: 4,
-    left: 4,
-    flexDirection: 'row',
+    top: 4,
+    right: 4,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 2,
   },
-  viewsText: {
+  subjectText: {
     color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 10,
+    fontWeight: 'bold',
   },
 });
