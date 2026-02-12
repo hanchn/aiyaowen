@@ -3,12 +3,15 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
+    "start": "EXPO_HOME=.expo-home expo start --localhost",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "expo lint"
+    "android": "EXPO_HOME=.expo-home expo start --localhost --android",
+    "ios": "EXPO_HOME=.expo-home expo start --localhost --ios",
+    "web": "EXPO_HOME=.expo-home expo start --localhost --web",
+    "lint": "EXPO_HOME=.expo-home expo lint"
+  },
+  "engines": {
+    "node": ">=20.19.4"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
