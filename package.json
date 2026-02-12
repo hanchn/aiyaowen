@@ -3,10 +3,14 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
+    "prestart": "node ./scripts/check-node.js",
     "start": "EXPO_HOME=.expo-home expo start --localhost",
     "reset-project": "node ./scripts/reset-project.js",
+    "preandroid": "node ./scripts/check-node.js",
     "android": "EXPO_HOME=.expo-home expo start --localhost --android",
+    "preios": "node ./scripts/check-node.js",
     "ios": "EXPO_HOME=.expo-home expo start --localhost --ios",
+    "preweb": "node ./scripts/check-node.js",
     "web": "EXPO_HOME=.expo-home expo start --localhost --web",
     "lint": "EXPO_HOME=.expo-home expo lint"
   },
