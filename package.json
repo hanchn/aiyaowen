@@ -5,6 +5,8 @@
   "scripts": {
     "prestart": "node ./scripts/check-node.js",
     "start": "EXPO_HOME=.expo-home expo start --localhost",
+    "predev": "node ./scripts/check-node.js",
+    "dev": "EXPO_HOME=.expo-home expo start --localhost --dev-client -c",
     "reset-project": "node ./scripts/reset-project.js",
     "preandroid": "node ./scripts/check-node.js",
     "android": "EXPO_HOME=.expo-home expo start --localhost --android",
